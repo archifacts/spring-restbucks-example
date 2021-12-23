@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.archifacts.core.model.Application;
+import org.archifacts.example.restbucks.asciidoc.AsciiDocWriter;
 import org.archifacts.example.restbucks.descriptor.SpringRestbucksDescriptors;
 import org.archifacts.integration.jmolecules.JMoleculesDescriptors;
 import org.archifacts.integration.plaintext.ApplicationOverview;
@@ -35,8 +36,9 @@ public class RestbucksExample implements Runnable {
 		final JavaClasses javaClasses = new ClassFileImporter().importPackages(ApplicationPackage);
 		final Application application = initApplication(javaClasses);
 		try {
-			Files.createDirectories(outputFolder);
 			writeApplicationOverviewToStdOut(application);
+			Files.createDirectories(outputFolder);
+			new AsciiDocWriter().writeAsciidoc(application, outputFolder.resolve("index.adoc"));
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}

@@ -53,9 +53,12 @@ public class ModuleAsciiDoc implements AsciiDocElement {
 				c4Component.uses(entitiesMap.getOrDefault(containedEntity, aggregateRootMap.get(containedEntity)), null, "contains");
 			});
 		});
-		
-		final ComponentView c4ComponentView = initC4ComponentView(c4Container, c4Views);
-		compositeAsciiDocElementBuilder.element(new ComponentViewPlantUMLDocElement(c4ComponentView));
+		if (!c4Container.getComponents().isEmpty()) {
+			final ComponentView c4ComponentView = initC4ComponentView(c4Container, c4Views);
+			compositeAsciiDocElementBuilder.element(new ComponentViewPlantUMLDocElement(c4ComponentView));
+		} else {
+			compositeAsciiDocElementBuilder.element(new TextDocElement("No Aggregate Roots or Entities present."));
+		}
 		compositeAsciiDocElement = compositeAsciiDocElementBuilder.build();
 	}
 

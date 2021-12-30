@@ -17,6 +17,7 @@ public class AsciiDocWriter {
 		final AsciiDoc asciiDoc = new AsciiDoc("Spring Restbucks");
 		application.getContainersOfType(SpringRestbucksDescriptors.ContainerDescriptors.ModuleDescriptor.type())
 				.stream()
+				.sorted()
 				.map(ModuleAsciiDoc::new)
 				.forEach(asciiDoc::addDocElement);
 

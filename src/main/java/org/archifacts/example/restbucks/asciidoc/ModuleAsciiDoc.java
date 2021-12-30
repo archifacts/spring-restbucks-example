@@ -1,21 +1,14 @@
 package org.archifacts.example.restbucks.asciidoc;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import org.archifacts.example.restbucks.model.RestbucksAggregateRoot;
-import org.archifacts.example.restbucks.model.RestbucksEntity;
-import org.archifacts.example.restbucks.model.RestbucksModule;
-import org.archifacts.example.restbucks.model.RestbucksRepository;
+import org.archifacts.core.model.ArtifactContainer;
 import org.archifacts.integration.asciidoc.AsciiDocElement;
 import org.archifacts.integration.asciidoc.CompositeAsciiDocElement;
 import org.archifacts.integration.asciidoc.TextDocElement;
 import org.archifacts.integration.c4.asciidoc.plantuml.ComponentViewPlantUMLDocElement;
+import org.archifacts.integration.jmolecules.JMoleculesDescriptors;
+import org.archifacts.integration.spring.SpringDescriptors;
 
 import com.structurizr.Workspace;
-import com.structurizr.model.Component;
 import com.structurizr.model.Container;
 import com.structurizr.model.CreateImpliedRelationshipsUnlessSameRelationshipExistsStrategy;
 import com.structurizr.model.Model;
@@ -25,11 +18,11 @@ import com.structurizr.view.ViewSet;
 
 public class ModuleAsciiDoc implements AsciiDocElement {
 
-	private final RestbucksModule module;
+	private final ArtifactContainer module;
 	private final CompositeAsciiDocElement.Builder compositeAsciiDocElementBuilder = CompositeAsciiDocElement.builder();
 	private final CompositeAsciiDocElement compositeAsciiDocElement;
 
-	public ModuleAsciiDoc(RestbucksModule module) {
+	public ModuleAsciiDoc(ArtifactContainer module) {
 		this.module = module;
 		compositeAsciiDocElementBuilder.element(new TextDocElement("== " + module.getName()));
 
@@ -38,34 +31,14 @@ public class ModuleAsciiDoc implements AsciiDocElement {
 		final Container c4Container = initC4Container(c4SoftwareSystem);
 		final ViewSet c4Views = c4Workspace.getViews();
 
-		final Map<RestbucksAggregateRoot, Component> aggregateRootMap = module.getAggregateRoots()
-				.stream()
-				.collect(Collectors.toMap(Function.identity(), aggregateRoot -> c4Container.addComponent(aggregateRoot.getName(), aggregateRoot.getBuildingBlock().getJavaClass().getName(), null,
-						aggregateRoot.getBuildingBlock().getType().getName())));
-		final Map<RestbucksEntity, Component> entitiesMap = module.getEntities()
-				.stream()
-				.collect(Collectors.toMap(Function.identity(), entity -> c4Container.addComponent(entity.getName(), entity.getBuildingBlock().getJavaClass().getName(), null,
-						entity.getBuildingBlock().getType().getName())));
-		final Map<RestbucksRepository, Component> repositoriesMap = module.getRepositories()
-				.stream()
-				.collect(Collectors.toMap(Function.identity(), entity -> c4Container.addComponent(entity.getName(), entity.getBuildingBlock().getJavaClass().getName(), null,
-						entity.getBuildingBlock().getType().getName())));
+		final C4ModelRepository c4ModelRepository = new C4ModelRepository(c4Container);
 
-		final Map<RestbucksEntity, Component> allEntitiesMap = new HashMap<>();
-		allEntitiesMap.putAll(aggregateRootMap);
-		allEntitiesMap.putAll(entitiesMap);
-		allEntitiesMap.forEach((entity, c4Component) -> {
-			entity.getContainedEntities().forEach(containedEntity -> {
-				c4Component.uses(entitiesMap.getOrDefault(containedEntity, aggregateRootMap.get(containedEntity)), null, "contains");
-			});
-		});
-
-		allEntitiesMap.forEach((entity, c4Component) -> {
-			final RestbucksRepository managingRepository = entity.getManagingRepository();
-			if (managingRepository != null) {
-				c4Component.uses(repositoriesMap.get(managingRepository), null, "managed by");
-			}
-		});
+		module.getOutgoingRelationshipsOfRoles(
+				JMoleculesDescriptors.RelationshipDescriptors.ContainedEntityDescriptor.role(),
+				JMoleculesDescriptors.RelationshipDescriptors.IdentifiedByDescriptor.role(),
+				SpringDescriptors.RelationshipDescriptors.ManagedByDescriptor.role())
+				.stream()
+				.forEach(c4ModelRepository::relationship);
 
 		if (!c4Container.getComponents().isEmpty()) {
 			final ComponentView c4ComponentView = initC4ComponentView(c4Container, c4Views);

@@ -7,8 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.archifacts.core.model.Application;
-import org.archifacts.example.restbucks.model.RestbucksApplication;
-import org.archifacts.example.restbucks.model.RestbucksApplicationBuilder;
+import org.archifacts.example.restbucks.descriptor.SpringRestbucksDescriptors;
 import org.archifacts.integration.asciidoc.AsciiDoc;
 
 public class AsciiDocWriter {
@@ -16,9 +15,7 @@ public class AsciiDocWriter {
 	public void writeAsciidoc(final Application application, final Path outputFile) throws IOException {
 
 		final AsciiDoc asciiDoc = new AsciiDoc("Spring Restbucks");
-		final RestbucksApplicationBuilder restbucksApplicationBuilder = new RestbucksApplicationBuilder();
-		final RestbucksApplication restbucksApplication = restbucksApplicationBuilder.transform(application);
-		restbucksApplication.getModules()
+		application.getContainersOfType(SpringRestbucksDescriptors.ContainerDescriptors.ModuleDescriptor.type())
 				.stream()
 				.map(ModuleAsciiDoc::new)
 				.forEach(asciiDoc::addDocElement);

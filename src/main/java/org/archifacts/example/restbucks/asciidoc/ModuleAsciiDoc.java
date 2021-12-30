@@ -1,12 +1,14 @@
 package org.archifacts.example.restbucks.asciidoc;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.archifacts.example.restbucks.model.SpringRestbucksAggregateRoot;
-import org.archifacts.example.restbucks.model.SpringRestbucksEntity;
-import org.archifacts.example.restbucks.model.SpringRestbucksModule;
+import org.archifacts.example.restbucks.model.RestbucksAggregateRoot;
+import org.archifacts.example.restbucks.model.RestbucksEntity;
+import org.archifacts.example.restbucks.model.RestbucksModule;
+import org.archifacts.example.restbucks.model.RestbucksRepository;
 import org.archifacts.integration.asciidoc.AsciiDocElement;
 import org.archifacts.integration.asciidoc.CompositeAsciiDocElement;
 import org.archifacts.integration.asciidoc.TextDocElement;
@@ -23,36 +25,48 @@ import com.structurizr.view.ViewSet;
 
 public class ModuleAsciiDoc implements AsciiDocElement {
 
-	private final SpringRestbucksModule module;
+	private final RestbucksModule module;
 	private final CompositeAsciiDocElement.Builder compositeAsciiDocElementBuilder = CompositeAsciiDocElement.builder();
 	private final CompositeAsciiDocElement compositeAsciiDocElement;
 
-	public ModuleAsciiDoc(SpringRestbucksModule module) {
+	public ModuleAsciiDoc(RestbucksModule module) {
 		this.module = module;
 		compositeAsciiDocElementBuilder.element(new TextDocElement("== " + module.getName()));
-		
+
 		final Workspace c4Workspace = initC4Workspace();
 		final SoftwareSystem c4SoftwareSystem = initC4SoftwareSystem(c4Workspace);
 		final Container c4Container = initC4Container(c4SoftwareSystem);
 		final ViewSet c4Views = c4Workspace.getViews();
-		
-		final Map<SpringRestbucksAggregateRoot, Component> aggregateRootMap = module.getAggregateRoots()
+
+		final Map<RestbucksAggregateRoot, Component> aggregateRootMap = module.getAggregateRoots()
 				.stream()
 				.collect(Collectors.toMap(Function.identity(), aggregateRoot -> c4Container.addComponent(aggregateRoot.getName(), aggregateRoot.getBuildingBlock().getJavaClass().getName(), null,
 						aggregateRoot.getBuildingBlock().getType().getName())));
-		final Map<SpringRestbucksEntity, Component> entitiesMap = module.getEntities()
+		final Map<RestbucksEntity, Component> entitiesMap = module.getEntities()
 				.stream()
-				.collect(Collectors.toMap(Function.identity(), aggregateRoot -> c4Container.addComponent(aggregateRoot.getName(), aggregateRoot.getBuildingBlock().getJavaClass().getName(), null,
-						aggregateRoot.getBuildingBlock().getType().getName())));
-		
-		System.out.println("TEST1");
-		aggregateRootMap.forEach((aggregateRoot, c4Component) -> {
-			aggregateRoot.getContainedEntities().forEach(containedEntity -> {
-				System.out.println("TEST");
-				System.out.println(aggregateRoot + " -> " + containedEntity);
+				.collect(Collectors.toMap(Function.identity(), entity -> c4Container.addComponent(entity.getName(), entity.getBuildingBlock().getJavaClass().getName(), null,
+						entity.getBuildingBlock().getType().getName())));
+		final Map<RestbucksRepository, Component> repositoriesMap = module.getRepositories()
+				.stream()
+				.collect(Collectors.toMap(Function.identity(), entity -> c4Container.addComponent(entity.getName(), entity.getBuildingBlock().getJavaClass().getName(), null,
+						entity.getBuildingBlock().getType().getName())));
+
+		final Map<RestbucksEntity, Component> allEntitiesMap = new HashMap<>();
+		allEntitiesMap.putAll(aggregateRootMap);
+		allEntitiesMap.putAll(entitiesMap);
+		allEntitiesMap.forEach((entity, c4Component) -> {
+			entity.getContainedEntities().forEach(containedEntity -> {
 				c4Component.uses(entitiesMap.getOrDefault(containedEntity, aggregateRootMap.get(containedEntity)), null, "contains");
 			});
 		});
+
+		allEntitiesMap.forEach((entity, c4Component) -> {
+			final RestbucksRepository managingRepository = entity.getManagingRepository();
+			if (managingRepository != null) {
+				c4Component.uses(repositoriesMap.get(managingRepository), null, "managed by");
+			}
+		});
+
 		if (!c4Container.getComponents().isEmpty()) {
 			final ComponentView c4ComponentView = initC4ComponentView(c4Container, c4Views);
 			compositeAsciiDocElementBuilder.element(new ComponentViewPlantUMLDocElement(c4ComponentView));
@@ -65,17 +79,17 @@ public class ModuleAsciiDoc implements AsciiDocElement {
 	private Workspace initC4Workspace() {
 		return new Workspace("Spring Restbucks", null);
 	}
-	
+
 	private SoftwareSystem initC4SoftwareSystem(Workspace workspace) {
 		final Model model = workspace.getModel();
 		model.setImpliedRelationshipsStrategy(new CreateImpliedRelationshipsUnlessSameRelationshipExistsStrategy());
-		return  model.addSoftwareSystem(workspace.getName());
+		return model.addSoftwareSystem(workspace.getName());
 	}
-	
+
 	private Container initC4Container(SoftwareSystem softwareSystem) {
 		return softwareSystem.addContainer(module.getName());
 	}
-	
+
 	private ComponentView initC4ComponentView(final Container container, final ViewSet views) {
 
 		final ComponentView componentView = views.createComponentView(container, container.getName(), null);
@@ -83,7 +97,7 @@ public class ModuleAsciiDoc implements AsciiDocElement {
 		componentView.addExternalDependencies();
 		return componentView;
 	}
-	
+
 	@Override
 	public String render() {
 		return compositeAsciiDocElement.render();

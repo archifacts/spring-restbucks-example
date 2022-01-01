@@ -63,6 +63,7 @@ public class RestbucksExample implements Runnable {
 				.addBuildingBlockDescriptor(SpringDescriptors.BuildingBlockDescriptors.ComponentDescriptor)
 				.addSourceBasedRelationshipDescriptor(JMoleculesDescriptors.RelationshipDescriptors.IdentifiedByDescriptor)
 				.addSourceBasedRelationshipDescriptor(JMoleculesDescriptors.RelationshipDescriptors.ContainedEntityDescriptor)
+				.addSourceBasedRelationshipDescriptor(JMoleculesDescriptors.RelationshipDescriptors.AggregateRootAssociationDescriptor)
 				.addSourceBasedRelationshipDescriptor(SpringDescriptors.RelationshipDescriptors.EventListenerDescriptor)
 				.addTargetBasedRelationshipDescriptor(SpringDescriptors.RelationshipDescriptors.ManagedByDescriptor)
 				.buildApplication(javaClasses);

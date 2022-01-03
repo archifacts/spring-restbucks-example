@@ -23,23 +23,37 @@ public class AsciiDocWriter {
 		final AsciiDoc asciiDoc = new AsciiDoc("Spring Restbucks");
 
 		final Workspace c4Workspace = initC4Workspace();
-		final C4ModelRepository c4ModelRepository = new C4ModelRepository(c4Workspace);
-
+		
+		
+		final C4ModelBuilder c4ModelBuilder = new C4ModelBuilder(c4Workspace);
+		
 		application.getRelationshipsOfRoles(
 				JMoleculesDescriptors.RelationshipDescriptors.ContainedEntityDescriptor.role(),
 				JMoleculesDescriptors.RelationshipDescriptors.IdentifiedByDescriptor.role(),
 				JMoleculesDescriptors.RelationshipDescriptors.AggregateRootAssociationDescriptor.role(),
 				SpringDescriptors.RelationshipDescriptors.ManagedByDescriptor.role())
 				.stream()
-				.forEach(c4ModelRepository::relationship);
-
+				.forEach(c4ModelBuilder::addRelationship);
+		final C4Model c4Model = c4ModelBuilder.build();
+		
+		
+//		final C4ModelRepository c4ModelRepository = new C4ModelRepository(c4Workspace);
+//
+//		application.getRelationshipsOfRoles(
+//				JMoleculesDescriptors.RelationshipDescriptors.ContainedEntityDescriptor.role(),
+//				JMoleculesDescriptors.RelationshipDescriptors.IdentifiedByDescriptor.role(),
+//				JMoleculesDescriptors.RelationshipDescriptors.AggregateRootAssociationDescriptor.role(),
+//				SpringDescriptors.RelationshipDescriptors.ManagedByDescriptor.role())
+//				.stream()
+//				.forEach(c4ModelRepository::relationship);
+//
 		final List<ArtifactContainer> modules = application.getContainersOfType(SpringRestbucksDescriptors.ContainerDescriptors.ModuleDescriptor.type())
 				.stream()
 				.filter(module -> !module.getBuildingBlocksOfTypes(JMoleculesDescriptors.BuildingBlockDescriptors.AggregateRootDescriptor.type(), JMoleculesDescriptors.BuildingBlockDescriptors.EntityDescriptor.type()).isEmpty())
 				.sorted()
 				.toList();
 		
-		asciiDoc.addDocElement(new ModulesAsciiDoc(modules, c4ModelRepository));
+		asciiDoc.addDocElement(new ModulesAsciiDoc(modules, c4Model));
 
 		try (BufferedWriter writer = Files.newBufferedWriter(outputFile, StandardCharsets.UTF_8)) {
 			asciiDoc.writeToWriter(writer);

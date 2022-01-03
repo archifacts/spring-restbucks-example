@@ -18,21 +18,21 @@ public class ModulesAsciiDoc implements AsciiDocElement {
 	private final CompositeAsciiDocElement.Builder compositeAsciiDocElementBuilder = CompositeAsciiDocElement.builder();
 	private final CompositeAsciiDocElement compositeAsciiDocElement;
 
-	public ModulesAsciiDoc(List<ArtifactContainer> modules, C4ModelRepository c4ModelRepository) {
+	public ModulesAsciiDoc(List<ArtifactContainer> modules, C4Model c4Model) {
 		compositeAsciiDocElementBuilder.element(new TextDocElement("== Modules"));
 
-		final ViewSet c4Views = c4ModelRepository.workspace().getViews();
+		final ViewSet c4Views = c4Model.workspace().getViews();
 
 		final List<Container> containers = modules
 				.stream()
-				.map(module -> c4ModelRepository.container(module))
+				.map(module -> c4Model.container(module))
 				.toList();
-		final ContainerView containerView = initC4ContainerView(c4ModelRepository.softwareSystem(), containers, c4Views);
+		final ContainerView containerView = initC4ContainerView(c4Model.softwareSystem(), containers, c4Views);
 		compositeAsciiDocElementBuilder.element(new ContainerViewPlantUMLDocElement(containerView));
 
 		modules
 				.stream()
-				.map(module -> new ModuleAsciiDoc(module, c4ModelRepository))
+				.map(module -> new ModuleAsciiDoc(module, c4Model))
 				.forEach(compositeAsciiDocElementBuilder::element);
 
 		compositeAsciiDocElement = compositeAsciiDocElementBuilder.build();

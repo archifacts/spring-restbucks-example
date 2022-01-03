@@ -15,12 +15,12 @@ public class ModuleAsciiDoc implements AsciiDocElement {
 	private final CompositeAsciiDocElement.Builder compositeAsciiDocElementBuilder = CompositeAsciiDocElement.builder();
 	private final CompositeAsciiDocElement compositeAsciiDocElement;
 
-	public ModuleAsciiDoc(ArtifactContainer module, C4ModelRepository c4ModelRepository) {
+	public ModuleAsciiDoc(ArtifactContainer module, C4Model c4Model) {
 		compositeAsciiDocElementBuilder.element(new TextDocElement("== " + module.getName()));
 
-		final ViewSet c4Views = c4ModelRepository.workspace().getViews();
+		final ViewSet c4Views = c4Model.workspace().getViews();
 
-		final Container c4Container = c4ModelRepository.container(module);
+		final Container c4Container = c4Model.container(module);
 
 		final ComponentView c4ComponentView = initC4ComponentView(c4Container, c4Views);
 		compositeAsciiDocElementBuilder.element(new ComponentViewPlantUMLDocElement(c4ComponentView));

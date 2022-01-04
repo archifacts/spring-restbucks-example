@@ -5,6 +5,7 @@ import org.archifacts.integration.asciidoc.AsciiDocElement;
 import org.archifacts.integration.asciidoc.CompositeAsciiDocElement;
 import org.archifacts.integration.asciidoc.TextDocElement;
 import org.archifacts.integration.c4.asciidoc.plantuml.ComponentViewPlantUMLDocElement;
+import org.archifacts.integration.c4.model.C4Model;
 
 import com.structurizr.model.Container;
 import com.structurizr.view.ComponentView;

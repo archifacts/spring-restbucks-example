@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 
 import org.archifacts.core.model.Application;
@@ -38,16 +37,6 @@ public class AsciiDocWriter {
 				.forEach(c4ModelBuilder::relationship);
 		final C4Model c4Model = c4ModelBuilder.build();
 
-//		final C4ModelRepository c4ModelRepository = new C4ModelRepository(c4Workspace);
-//
-//		application.getRelationshipsOfRoles(
-//				JMoleculesDescriptors.RelationshipDescriptors.ContainedEntityDescriptor.role(),
-//				JMoleculesDescriptors.RelationshipDescriptors.IdentifiedByDescriptor.role(),
-//				JMoleculesDescriptors.RelationshipDescriptors.AggregateRootAssociationDescriptor.role(),
-//				SpringDescriptors.RelationshipDescriptors.ManagedByDescriptor.role())
-//				.stream()
-//				.forEach(c4ModelRepository::relationship);
-//
 		final List<ArtifactContainer> modules = application.getContainersOfType(SpringRestbucksDescriptors.ContainerDescriptors.ModuleDescriptor.type())
 				.stream()
 				.filter(module -> !module

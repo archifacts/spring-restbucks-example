@@ -9,7 +9,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
-		<archifacts.version>0.2.1-SNAPSHOT</archifacts.version>
+		<archifacts.version>0.3.0-SNAPSHOT</archifacts.version>
 		<restbucks.version>1.0.0.BUILD-SNAPSHOT</restbucks.version>
 		<structurizr-core.version>1.9.8</structurizr-core.version>
 		<picocli.version>4.6.1</picocli.version>

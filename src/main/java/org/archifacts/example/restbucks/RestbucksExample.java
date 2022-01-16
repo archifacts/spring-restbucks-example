@@ -51,21 +51,21 @@ public class RestbucksExample implements Runnable {
 	}
 
 	private Application initApplication(final JavaClasses javaClasses) {
-		return Application.builder().addContainerDescriptor(SpringRestbucksDescriptors.ContainerDescriptors.ModuleDescriptor)
-				.addBuildingBlockDescriptor(JMoleculesDescriptors.BuildingBlockDescriptors.EventDescriptor)
-				.addBuildingBlockDescriptor(JMoleculesDescriptors.BuildingBlockDescriptors.AggregateRootDescriptor)
-				.addBuildingBlockDescriptor(JMoleculesDescriptors.BuildingBlockDescriptors.EntityDescriptor)
-				.addBuildingBlockDescriptor(JMoleculesDescriptors.BuildingBlockDescriptors.IdentifierDescriptor)
-				.addBuildingBlockDescriptor(SpringDescriptors.BuildingBlockDescriptors.ConfigurationDescriptor)
-				.addBuildingBlockDescriptor(SpringDescriptors.BuildingBlockDescriptors.ControllerDescriptor)
-				.addBuildingBlockDescriptor(SpringDescriptors.BuildingBlockDescriptors.RepositoryDescriptor)
-				.addBuildingBlockDescriptor(SpringDescriptors.BuildingBlockDescriptors.ServiceDescriptor)
-				.addBuildingBlockDescriptor(SpringDescriptors.BuildingBlockDescriptors.ComponentDescriptor)
-				.addSourceBasedRelationshipDescriptor(JMoleculesDescriptors.RelationshipDescriptors.IdentifiedByDescriptor)
-				.addSourceBasedRelationshipDescriptor(JMoleculesDescriptors.RelationshipDescriptors.ContainedEntityDescriptor)
-				.addSourceBasedRelationshipDescriptor(JMoleculesDescriptors.RelationshipDescriptors.AggregateRootAssociationDescriptor)
-				.addSourceBasedRelationshipDescriptor(SpringDescriptors.RelationshipDescriptors.EventListenerDescriptor)
-				.addTargetBasedRelationshipDescriptor(SpringDescriptors.RelationshipDescriptors.ManagedByDescriptor)
+		return Application.builder().descriptor(SpringRestbucksDescriptors.ContainerDescriptors.ModuleDescriptor)
+				.descriptor(JMoleculesDescriptors.BuildingBlockDescriptors.EventDescriptor)
+				.descriptor(JMoleculesDescriptors.BuildingBlockDescriptors.AggregateRootDescriptor)
+				.descriptor(JMoleculesDescriptors.BuildingBlockDescriptors.EntityDescriptor)
+				.descriptor(JMoleculesDescriptors.BuildingBlockDescriptors.IdentifierDescriptor)
+				.descriptor(SpringDescriptors.BuildingBlockDescriptors.ConfigurationDescriptor)
+				.descriptor(SpringDescriptors.BuildingBlockDescriptors.ControllerDescriptor)
+				.descriptor(SpringDescriptors.BuildingBlockDescriptors.RepositoryDescriptor)
+				.descriptor(SpringDescriptors.BuildingBlockDescriptors.ServiceDescriptor)
+				.descriptor(SpringDescriptors.BuildingBlockDescriptors.ComponentDescriptor)
+				.descriptor(JMoleculesDescriptors.RelationshipDescriptors.IdentifiedByDescriptor)
+				.descriptor(JMoleculesDescriptors.RelationshipDescriptors.ContainedEntityDescriptor)
+				.descriptor(JMoleculesDescriptors.RelationshipDescriptors.AggregateRootAssociationDescriptor)
+				.descriptor(SpringDescriptors.RelationshipDescriptors.EventListenerDescriptor)
+				.descriptor(SpringDescriptors.RelationshipDescriptors.ManagedByDescriptor)
 				.buildApplication(javaClasses);
 
 	}

@@ -1,7 +1,6 @@
 package org.archifacts.example.restbucks;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -9,7 +8,6 @@ import org.archifacts.core.model.Application;
 import org.archifacts.example.restbucks.asciidoc.AsciiDocWriter;
 import org.archifacts.example.restbucks.descriptor.SpringRestbucksDescriptors;
 import org.archifacts.integration.jmolecules.JMoleculesDescriptors;
-import org.archifacts.integration.plaintext.ApplicationOverview;
 import org.archifacts.integration.spring.SpringDescriptors;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
@@ -36,22 +34,16 @@ public class RestbucksExample implements Runnable {
 		final JavaClasses javaClasses = new ClassFileImporter().importPackages(ApplicationPackage);
 		final Application application = initApplication(javaClasses);
 		try {
-			writeApplicationOverviewToStdOut(application);
 			Files.createDirectories(outputFolder);
 			new AsciiDocWriter().writeAsciidoc(application, outputFolder.resolve("index.adoc"));
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
-	private void writeApplicationOverviewToStdOut(final Application application) throws IOException {
-		try (PrintWriter writer = new PrintWriter(System.out, true)) {
-			new ApplicationOverview(application).writeToWriter(writer);
-		}
-	}
 
 	private Application initApplication(final JavaClasses javaClasses) {
-		return Application.builder().descriptor(SpringRestbucksDescriptors.ContainerDescriptors.ModuleDescriptor)
+		return Application.builder()
+				.descriptor(SpringRestbucksDescriptors.ContainerDescriptors.ModuleDescriptor)
 				.descriptor(JMoleculesDescriptors.BuildingBlockDescriptors.EventDescriptor)
 				.descriptor(JMoleculesDescriptors.BuildingBlockDescriptors.AggregateRootDescriptor)
 				.descriptor(JMoleculesDescriptors.BuildingBlockDescriptors.EntityDescriptor)

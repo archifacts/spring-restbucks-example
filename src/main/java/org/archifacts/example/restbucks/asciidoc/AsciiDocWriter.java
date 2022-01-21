@@ -11,6 +11,7 @@ import org.archifacts.core.model.Application;
 import org.archifacts.core.model.ArtifactContainer;
 import org.archifacts.example.restbucks.descriptor.SpringRestbucksDescriptors;
 import org.archifacts.integration.asciidoc.AsciiDoc;
+import org.archifacts.integration.asciidoc.TextDocElement;
 import org.archifacts.integration.c4.model.C4Model;
 import org.archifacts.integration.c4.model.C4ModelBuilder;
 import org.archifacts.integration.jmolecules.JMoleculesDescriptors;
@@ -45,6 +46,7 @@ public class AsciiDocWriter {
 				.sorted()
 				.toList();
 
+		asciiDoc.addDocElement(new TextDocElement("include::_preamble.adoc[]"));
 		asciiDoc.addDocElement(new ModulesAsciiDoc(modules, c4Model));
 
 		try (BufferedWriter writer = Files.newBufferedWriter(outputFile, StandardCharsets.UTF_8)) {

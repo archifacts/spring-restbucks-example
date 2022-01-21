@@ -1,0 +1,10 @@
+== Preamble
+This document describes the aggregates of https://github.com/odrotbohm/spring-restbucks[Spring Restbucks] by https://twitter.com/odrotbohm[Oliver Drotbohm].
+
+Spring Restbucks uses https://spring.io/projects/spring-framework[Spring] and https://github.com/xmolecules/jmolecules[jMolecules].
+
+All the information in this document - except this preamble - is extracted from the applications' bytecode using https://www.archifacts.org[archifacts].
+
+The document is updated using GitHub Actions. 
+
+You can find the source code at Github: https://github.com/archifacts/spring-restbucks-example
